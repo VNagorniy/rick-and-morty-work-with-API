@@ -12,11 +12,19 @@ export const CharacterPage = () => {
 		next: null
 	});
 
+	const [error, setError] = useState(null);
+
 	const fetchData = (url) => {
-		axios.get(url).then((res) => {
-			setCharacters(res.data.results);
-			setInfo(res.data.info);
-		});
+		axios
+			.get(url)
+			.then((res) => {
+				setCharacters(res.data.results);
+				setInfo(res.data.info);
+				setError(null);
+			})
+			.catch((err) => {
+				setError(err.response.data.error);
+			});
 	};
 
 	useEffect(() => {
@@ -31,10 +39,17 @@ export const CharacterPage = () => {
 		fetchData(info.next);
 	};
 
+	const searchHeadler = (event) => {
+		const value = event.currentTarget.value;
+		fetchData(`https://rickandmortyapi.com/api/character?name=${value}`);
+	};
+
 	return (
 		<div className={'pageContainer'}>
 			<h1 className={'pageTitle'}>CharacterPage</h1>
-			{characters.length && (
+			<input type="search" className={s.search} onChange={searchHeadler} placeholder="Search..." />
+			{error && <div className="errorMessage">{error}</div>}
+			{!error && characters.length && (
 				<>
 					{
 						<div className={s.characters}>
