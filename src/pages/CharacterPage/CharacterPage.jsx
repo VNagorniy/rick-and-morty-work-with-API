@@ -12,25 +12,23 @@ export const CharacterPage = () => {
 		next: null
 	});
 
-	useEffect(() => {
-		axios.get('https://rickandmortyapi.com/api/character').then((res) => {
-			setCharacters(res.data.results);
-			setInfo(res.data.info);
-		});
-	}, []);
-
-	const nextPageHandler = () => {
-		axios.get(info.next).then((res) => {
+	const fetchData = (url) => {
+		axios.get(url).then((res) => {
 			setCharacters(res.data.results);
 			setInfo(res.data.info);
 		});
 	};
 
+	useEffect(() => {
+		fetchData('https://rickandmortyapi.com/api/character');
+	}, []);
+
 	const previousPageHandler = () => {
-		axios.get(info.prev).then((res) => {
-			setCharacters(res.data.results);
-			setInfo(res.data.info);
-		});
+		fetchData(info.prev);
+	};
+
+	const nextPageHandler = () => {
+		fetchData(info.next);
 	};
 
 	return (
